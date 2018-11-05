@@ -16,16 +16,17 @@
   <key>ProgramArguments</key>
   <array>
     <string>/usr/local/bin/brewupdate.sh</string>
-    <string>update</string>
   </array>
+  <key>StandardOutPath</key>
+  <string>@USERHOME@/Library/Logs/Homebrew/brewupdate/brewupdate.log</string>
+  <key>StandardErrorPath</key>
+  <string>@USERHOME@/Library/Logs/Homebrew/brewupdate/brewupdate-error.log</string>
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key>
     <integer>11</integer>
     <key>Minute</key>
     <integer>0</integer>
-    <key>Weekday</key>
-    <integer>7</integer>
   </dict>
 </dict>
 </plist>
