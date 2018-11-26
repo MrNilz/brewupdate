@@ -11,19 +11,34 @@
 # 2015/01/07 cgwong v0.1.2: Commented unneeded lines.
 # 2015/01/20 cgwong v0.1.3: Added terminal output for verbose execution.
 # 2018/11/05 mrnilz v0.1.4: Only notify of updates
+# 2018/11/26 mrnilz v0.1.5: Add notifier for script errors
 # ############################################################################
 
 set -e
 
-echo "----- Starting new run $(date) ------"
+function msg() {
+  terminal-notifier -title 'Homebrew' -message "$1"
+}
+
+trap 'msg "Error Occured during Homebrew check for update. On line $LINENO"' ERR
+
+
+echo "----- Starting new run of brewupdate $(date) ------"
+
 brew update
 brew cleanup
 brew doctor
 
-OUTDATED=$(brew outdated --json=v1 | jq 'select(.[].pinned != true)')
+OUTDATED_BREW=$(brew outdated --json=v1 | jq 'select(.[].pinned != true)')
 
-if [ "$OUTDATED" ]; then
-  terminal-notifier -title 'Homebrew' -message 'Packages need upgrade...'
+if [ "$OUTDATED_BREW" ]; then
+  msg 'Packages need upgrade...'
 fi
 
-echo "----- Finished run $(date) ------"
+OUTDATED_CASK=$(brew cask outdated)
+
+if [ "$OUTDATED_CASK" ]; then
+  msg 'Casks need upgrade...'
+fi
+
+echo "----- Finished run of brewupdate $(date) ------"
