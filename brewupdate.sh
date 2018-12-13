@@ -12,6 +12,7 @@
 # 2015/01/20 cgwong v0.1.3: Added terminal output for verbose execution.
 # 2018/11/05 mrnilz v0.1.4: Only notify of updates
 # 2018/11/26 mrnilz v0.1.5: Add notifier for script errors
+# 2018/12/10 mrnilz v0.1.6: Add mention outdated in notifier and debug-echo-output msg
 # ############################################################################
 
 set -e
@@ -29,16 +30,20 @@ brew update
 brew cleanup
 brew doctor
 
-OUTDATED_BREW=$(brew outdated --json=v1 | jq 'select(.[].pinned != true)')
+OUTDATED_BREW=$(brew outdated --json=v1 | jq '.[] | select(.pinned != true)')
 
 if [ "$OUTDATED_BREW" ]; then
-  msg 'Packages need upgrade...'
+  MSG_BREW="Package(s) \"$(echo $OUTDATED_BREW | jq .name | xargs )\" need upgrade..."
+  echo "$MSG_BREW"
+  msg "$MSG_BREW"
 fi
 
 OUTDATED_CASK=$(brew cask outdated)
 
 if [ "$OUTDATED_CASK" ]; then
-  msg 'Casks need upgrade...'
+  MSG_CASK="Cask(s) \"$OUTDATED_CASK\" need upgrade..."
+  echo "$MSG_CASK"
+  msg "$MSG_CASK"
 fi
 
 echo "----- Finished run of brewupdate $(date) ------"
